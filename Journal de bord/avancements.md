@@ -90,3 +90,10 @@ security(backend): add HTTP hardening and project structure
 - Section « Documentation du projet » ajoutée au README (sans modifier le cahier des charges)
 - Doc API, fiabilité (cas limites) et sécurité alignées sur les §2, §3 et §5 du sujet
 - CI : `npm audit --audit-level=high` + tests `/api/products` et rejet `category=hack`
+
+## Phase 3 — Charger plus (branche `feat/load-more`)
+
+- Bouton « Charger plus » à la place de Précédent/Suivant
+- Même styles CSS (classe `.pagination` conservée)
+- Produits accumulés au clic, grille reste visible pendant le chargement
+- Compteur « X sur Y produits », reset au changement filtre/tri
