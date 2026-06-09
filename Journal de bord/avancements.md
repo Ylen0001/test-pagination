@@ -10,6 +10,7 @@
 ## Documentation
 
 - Création de `avancements.md` (suivi des modifications)
+- Dossier `Journal de bord/` créé — déplacement de ce fichier + schéma CI
 
 ## Convention de commit (format 2 — Conventional Commits + type `security`)
 
@@ -55,10 +56,23 @@ security(backend): add HTTP hardening and project structure
 
 **`mongo-sanitize`** — middleware qui supprime les opérateurs MongoDB (`$ne`, `$gt`…) des entrées utilisateur. Filet de sécurité contre l'injection NoSQL, en complément de la validation par whitelist.
 
-## CI/CD
+## CI
 
 - Workflow GitHub Actions `.github/workflows/ci.yml`
 - Job **Backend** : `npm ci`, syntax check, smoke test `/health` avec MongoDB
 - Job **Frontend** : `npm ci`, `vite build`
 - Job **Docker** : `docker compose build`
 - Ajout `frontend/package-lock.json` pour builds reproductibles
+- Commit : `chore(ci): add GitHub Actions pipeline`
+- Schéma CI : voir `ci-schema.md`
+- CD / hébergement : non prévu pour l'instant
+
+## Phase 1 — API produits paginée
+
+- Branche : `feat/api-products-pagination`
+- Commit : `feat(api): add paginated products endpoint`
+- `GET /api/products` avec pagination serveur (`page`, `limit`, `skip`/`limit` MongoDB)
+- Validation stricte des query params via whitelist (`validateProductsQuery.js`)
+- Service `products.js` : filtre catégorie, tri, comptage total
+- Réponse `{ data, pagination: { page, limit, total, totalPages } }`
+- Cas limites : params invalides → 400, liste vide → 200 + `[]`
