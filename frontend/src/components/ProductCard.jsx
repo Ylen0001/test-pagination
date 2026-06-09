@@ -3,7 +3,7 @@ export default function ProductCard({ product }) {
     <div className="product-card">
       <h2>{product.name}</h2>
       <p className="category">{product.category}</p>
-      <p className="price">{product.price.toFixed(2)} €</p>
+      <p className="price">{Number(product.price).toFixed(2)} €</p>
     </div>
   );
 }

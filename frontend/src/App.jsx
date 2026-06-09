@@ -1,68 +1,56 @@
 import { useState } from "react";
 import { useProducts } from "./hooks/useProducts";
 import ProductCard from "./components/ProductCard";
-import Pagination from "./components/Pagination";
+import LoadMore from "./components/LoadMore";
 
 export default function App() {
-  const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState("createdAt");
   const [order, setOrder] = useState("desc");
 
-  const { products, pagination, loading, error } = useProducts({
-    page,
-    limit,
-    category,
-    sort,
-    order,
-  });
-
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    setPage(1);
-  };
-
-  const handleSortChange = (e) => {
-    setSort(e.target.value);
-    setPage(1);
-  };
-
-  const handleOrderChange = (e) => {
-    setOrder(e.target.value);
-    setPage(1);
-  };
+  const {
+    products,
+    pagination,
+    loading,
+    loadingMore,
+    error,
+    hasMore,
+    loadMore,
+  } = useProducts({ limit, category, sort, order });
 
   return (
     <div className="app">
       <div className="header">
         <h1>Catalogue produits</h1>
         <div className="filters">
-          <select value={category} onChange={handleCategoryChange}>
+          <select value={category} onChange={(e) => setCategory(e.target.value)}>
             <option value="">Toutes categories</option>
             <option value="shoes">Chaussures</option>
             <option value="clothing">Vetements</option>
             <option value="accessories">Accessoires</option>
             <option value="bags">Sacs</option>
           </select>
-          <select value={sort} onChange={handleSortChange}>
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="createdAt">Date</option>
             <option value="price">Prix</option>
             <option value="name">Nom</option>
           </select>
-          <select value={order} onChange={handleOrderChange}>
+          <select value={order} onChange={(e) => setOrder(e.target.value)}>
             <option value="asc">Croissant</option>
             <option value="desc">Decroissant</option>
           </select>
         </div>
       </div>
 
-      {loading && <p className="loading">Chargement...</p>}
+      {loading && products.length === 0 && (
+        <p className="loading">Chargement...</p>
+      )}
       {error && <p className="error">Erreur : {error}</p>}
 
-      {!loading && !error && (
+      {!error && (
         <>
-          {products.length === 0 ? (
+          {!loading && products.length === 0 ? (
             <p className="empty">Aucun produit trouve.</p>
           ) : (
             <div className="product-grid">
@@ -71,7 +59,13 @@ export default function App() {
               ))}
             </div>
           )}
-          <Pagination pagination={pagination} onPageChange={setPage} />
+          <LoadMore
+            loaded={products.length}
+            total={pagination?.total ?? 0}
+            hasMore={hasMore}
+            loadingMore={loadingMore}
+            onLoadMore={loadMore}
+          />
         </>
       )}
     </div>
