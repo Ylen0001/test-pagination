@@ -31,6 +31,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
       - name: Syntax check
         run: find src -name '*.js' -exec node --check {} \;
 
@@ -45,11 +48,11 @@ jobs:
           SERVER_PID=$!
           trap "kill $SERVER_PID" EXIT
           for i in $(seq 1 30); do
-            curl -fsS http://localhost:3001/health && exit 0
+            curl -fsS http://localhost:3001/health && break
             sleep 1
           done
-          echo "Backend health check failed"
-          exit 1
+          curl -fsS "http://localhost:3001/api/products?limit=2" | grep -q '"data"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:3001/api/products?category=hack')" = "400"
 
   frontend:
     name: Frontend
@@ -68,6 +71,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - run: npm ci
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
 
       - run: npm run build
 

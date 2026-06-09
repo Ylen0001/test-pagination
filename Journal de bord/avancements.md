@@ -84,3 +84,9 @@ security(backend): add HTTP hardening and project structure
 - Composants `ProductCard` et `Pagination`
 - Filtres et tris branchés sur l'API, reset page → 1 au changement
 - Affichage nom, catégorie, prix + navigation Précédent / Suivant
+
+## Documentation et durcissement CI
+
+- Section « Documentation du projet » ajoutée au README (sans modifier le cahier des charges)
+- Doc API, fiabilité (cas limites) et sécurité alignées sur les §2, §3 et §5 du sujet
+- CI : `npm audit --audit-level=high` + tests `/api/products` et rejet `category=hack`

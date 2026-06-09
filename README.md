@@ -60,3 +60,75 @@ Le reste (outillage, structure des dossiers, librairies UI) est laissé au candi
 - **Design graphique :** libre (sobriété suffisante pour un test).
 - **Modalité d’interaction** (boutons vs scroll infini, etc.) : libre, tant que le chargement reste **incrémental côté serveur**.
 
+---
+
+# Documentation du projet (réalisation)
+
+Complément au cahier des charges ci-dessus : lancement, API, fiabilité et mesures de sécurité ajoutées.
+
+## Lancement
+
+```bash
+docker compose up -d
+```
+
+| Service  | URL |
+| -------- | --- |
+| Frontend | http://localhost:5173 |
+| Backend  | http://localhost:3001 |
+| MongoDB  | localhost:27018 (dev uniquement) |
+
+## API — `GET /api/products`
+
+Liste paginée côté serveur (cf. §3 et §5 du cahier des charges).
+
+### Paramètres
+
+| Paramètre  | Type    | Défaut      | Description |
+| ---------- | ------- | ----------- | ----------- |
+| `page`     | entier  | `1`         | Numéro de page (≥ 1) |
+| `limit`    | entier  | `10`        | Produits par page (1–100) |
+| `category` | string  | —           | Filtre : `shoes`, `clothing`, `accessories`, `bags` |
+| `sort`     | string  | `createdAt` | Tri : `createdAt`, `price`, `name` |
+| `order`    | string  | `desc`      | Ordre : `asc`, `desc` |
+
+### Exemples
+
+```bash
+curl "http://localhost:3001/api/products"
+curl "http://localhost:3001/api/products?category=shoes&sort=price&order=asc&page=2&limit=5"
+```
+
+### Réponse
+
+```json
+{
+  "data": [ /* produits */ ],
+  "pagination": { "page": 1, "limit": 10, "total": 5000, "totalPages": 500 }
+}
+```
+
+## Fiabilité (cas limites — §2 et §5)
+
+| Cas | Comportement |
+| --- | ------------ |
+| Paramètres invalides (`page=-1`, `category=hack`) | `400` + message d'erreur |
+| Liste vide (filtre sans résultat, page hors range) | `200` + `data: []` |
+| Erreur serveur | `500` + message générique en production |
+| Réseau / API indisponible (frontend) | Message d'erreur affiché, pas de crash |
+
+## Sécurité (renfort — hors exigence minimale)
+
+Mesures ajoutées en complément de l'axe **fiabilité** du cahier des charges :
+
+- Validation stricte des paramètres par whitelist (aucun paramètre utilisateur passé brut à MongoDB)
+- `helmet`, CORS restrictif, rate limiting, `express-mongo-sanitize`
+- Error handler centralisé (pas de fuite de stack trace en production)
+- Variables d'environnement externalisées (voir `.env.example`)
+
+> MongoDB est exposé sur le port `27018` uniquement pour le développement local via Docker.
+
+## Stack
+
+Conforme au §4 : React (Vite), Node.js/Express, MongoDB natif (sans Mongoose).
+
