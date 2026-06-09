@@ -69,6 +69,8 @@ security(backend): add HTTP hardening and project structure
 
 ## Phase 1 — API produits paginée
 
+- Branche : `feat/api-products-pagination`
+- Commit : `feat(api): add paginated products endpoint`
 - `GET /api/products` avec pagination serveur (`page`, `limit`, `skip`/`limit` MongoDB)
 - Validation stricte des query params via whitelist (`validateProductsQuery.js`)
 - Service `products.js` : filtre catégorie, tri, comptage total
