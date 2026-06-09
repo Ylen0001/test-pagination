@@ -76,3 +76,11 @@ security(backend): add HTTP hardening and project structure
 - Service `products.js` : filtre catégorie, tri, comptage total
 - Réponse `{ data, pagination: { page, limit, total, totalPages } }`
 - Cas limites : params invalides → 400, liste vide → 200 + `[]`
+
+## Phase 2 — Frontend connecté à l'API
+
+- Couche `api/products.js` pour les appels HTTP
+- Hook `useProducts` : fetch, loading, error, annulation au démontage
+- Composants `ProductCard` et `Pagination`
+- Filtres et tris branchés sur l'API, reset page → 1 au changement
+- Affichage nom, catégorie, prix + navigation Précédent / Suivant
