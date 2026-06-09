@@ -76,11 +76,13 @@ docker compose up -d
 | -------- | --- |
 | Frontend | http://localhost:5173 |
 | Backend  | http://localhost:3001 |
+| API docs (Swagger) | http://localhost:3001/api-docs |
+| OpenAPI JSON | http://localhost:3001/api-docs.json |
 | MongoDB  | localhost:27018 (dev uniquement) |
 
 ## API — `GET /api/products`
 
-Liste paginée côté serveur (cf. §3 et §5 du cahier des charges).
+Liste paginée côté serveur (cf. §3 et §5 du cahier des charges). Documentation interactive : [Swagger UI](http://localhost:3001/api-docs).
 
 ### Paramètres
 

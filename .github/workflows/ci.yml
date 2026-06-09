@@ -53,6 +53,8 @@ jobs:
           done
           curl -fsS "http://localhost:3001/api/products?limit=2" | grep -q '"data"'
           test "$(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:3001/api/products?category=hack')" = "400"
+          curl -fsS http://localhost:3001/api-docs.json | grep -q '"openapi"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/api-docs/)" = "200"
 
   frontend:
     name: Frontend

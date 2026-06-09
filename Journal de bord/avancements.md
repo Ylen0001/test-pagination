@@ -106,3 +106,10 @@ security(backend): add HTTP hardening and project structure
 - Texte catégorie en **Burnt Sienna** (`#9E5B42`), libellés FR
 - Prix en **Stone Grey** (`#4C4147`) — variante claire entre Taupe Grey et Shadow Grey
 - Texte catégorie **Burnt Sienna**, polish UI : DM Sans, header structuré, skeleton loading, cartes hiérarchisées
+
+## Phase 5 — Swagger (branche `feat/swagger`)
+
+- Spec OpenAPI 3.0 generee depuis les constantes de validation (`config/openapi.js`)
+- Swagger UI sur `/api-docs`, spec JSON sur `/api-docs.json`
+- CSP Helmet assouplie uniquement sur les routes de documentation
+- CI : verification `/api-docs.json` et `/api-docs/`
