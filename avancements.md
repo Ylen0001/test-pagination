@@ -43,6 +43,22 @@ security(backend): add HTTP hardening and project structure
 - Structure backend : `routes/`, `middleware/`, `services/`, `config/` (GOT IT)
 - Middleware sécurité : helmet, CORS restrictif, rate limiting, mongo-sanitize (GOT IT)
 - Error handler centralisé + handler 404 (GOT IT)
-- Route `GET /health)` (GOT IT)
-- Constantes de validation préparées (`categories`, `sort`, `limit` max) (ASK)
-- `docker-compose` : variables `NODE_ENV` et `CORS_ORIGIN` (ASK)
+- Route `GET /health` (GOT IT)
+
+### Notes Phase 0
+
+**Constantes de validation** (`backend/src/config/constants.js`) — listes blanches préparées pour la Phase 1 : catégories, champs de tri, ordres, limites de pagination. On n'acceptera que ces valeurs dans l'API.
+
+**`NODE_ENV`** — indique l'environnement (`development` / `production`). En prod, l'error handler masque les détails des erreurs serveur.
+
+**`CORS_ORIGIN`** — URL du frontend autorisée à appeler l'API (`http://localhost:5173`). Bloque les requêtes cross-origin depuis d'autres domaines.
+
+**`mongo-sanitize`** — middleware qui supprime les opérateurs MongoDB (`$ne`, `$gt`…) des entrées utilisateur. Filet de sécurité contre l'injection NoSQL, en complément de la validation par whitelist.
+
+## CI/CD
+
+- Workflow GitHub Actions `.github/workflows/ci.yml`
+- Job **Backend** : `npm ci`, syntax check, smoke test `/health` avec MongoDB
+- Job **Frontend** : `npm ci`, `vite build`
+- Job **Docker** : `docker compose build`
+- Ajout `frontend/package-lock.json` pour builds reproductibles
