@@ -97,3 +97,12 @@ security(backend): add HTTP hardening and project structure
 - Même styles CSS (classe `.pagination` conservée)
 - Produits accumulés au clic, grille reste visible pendant le chargement
 - Compteur « X sur Y produits », reset au changement filtre/tri
+
+## Phase 4 — UI palette (branche `feat/ui-palette`)
+
+- Option Pantone : **White Onyx** / **Burnished Lilac** / **Rhodonite**
+- 60/30/10 : fond `#F0EEEC` / surfaces `#9B8FA8` / accent `#7A4F5E`
+- Style épuré premium : pierre claire, lilas bruni, rose minéral
+- Texte catégorie en **Burnt Sienna** (`#9E5B42`), libellés FR
+- Prix en **Stone Grey** (`#4C4147`) — variante claire entre Taupe Grey et Shadow Grey
+- Texte catégorie **Burnt Sienna**, polish UI : DM Sans, header structuré, skeleton loading, cartes hiérarchisées
