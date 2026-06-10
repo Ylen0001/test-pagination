@@ -11,7 +11,7 @@ export default function ProductCard({ product }) {
 
   return (
     <article className="product-card">
-      <p className="category">{categoryLabel}</p>
+      <span className="category-pill">{categoryLabel}</span>
       <h2 className="product-name">{product.name}</h2>
       <p className="price">{Number(product.price).toFixed(2)} €</p>
     </article>

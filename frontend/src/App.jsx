@@ -3,6 +3,9 @@ import { useProducts } from "./hooks/useProducts";
 import ProductCard from "./components/ProductCard";
 import SkeletonCard from "./components/SkeletonCard";
 import LoadMore from "./components/LoadMore";
+import EmptyState from "./components/EmptyState";
+import ErrorState from "./components/ErrorState";
+import Footer from "./components/Footer";
 
 export default function App() {
   const [limit] = useState(12);
@@ -16,88 +19,99 @@ export default function App() {
     loading,
     loadingMore,
     error,
+    loadMoreError,
     hasMore,
     loadMore,
+    retry,
   } = useProducts({ limit, category, sort, order });
 
+  const showInitialError = error && products.length === 0 && !loading;
+
   return (
-    <div className="app">
-      <header className="header">
-        <div className="header-title">
-          <h1>Catalogue</h1>
-          <p className="subtitle">Decouvrez notre selection</p>
-        </div>
-
-        <div className="filters-panel">
-          <div className="filter-group">
-            <label htmlFor="filter-category">Categorie</label>
-            <select
-              id="filter-category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">Toutes</option>
-              <option value="shoes">Chaussures</option>
-              <option value="clothing">Vetements</option>
-              <option value="accessories">Accessoires</option>
-              <option value="bags">Sacs</option>
-            </select>
+    <div className="page-shell">
+      <div className="app">
+        <header className="header">
+          <div className="header-title">
+            <h1>Catalogue</h1>
+            <p className="subtitle">Decouvrez notre selection</p>
           </div>
-          <div className="filter-group">
-            <label htmlFor="filter-sort">Trier par</label>
-            <select
-              id="filter-sort"
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-            >
-              <option value="createdAt">Date</option>
-              <option value="price">Prix</option>
-              <option value="name">Nom</option>
-            </select>
-          </div>
-          <div className="filter-group">
-            <label htmlFor="filter-order">Ordre</label>
-            <select
-              id="filter-order"
-              value={order}
-              onChange={(e) => setOrder(e.target.value)}
-            >
-              <option value="asc">Croissant</option>
-              <option value="desc">Decroissant</option>
-            </select>
-          </div>
-        </div>
-      </header>
 
-      {error && <p className="error">Erreur : {error}</p>}
-
-      {!error && (
-        <>
-          {loading && products.length === 0 ? (
-            <div className="product-grid">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
+          <div className="filters-panel">
+            <div className="filter-group">
+              <label htmlFor="filter-category">Categorie</label>
+              <select
+                id="filter-category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="">Toutes</option>
+                <option value="shoes">Chaussures</option>
+                <option value="clothing">Vetements</option>
+                <option value="accessories">Accessoires</option>
+                <option value="bags">Sacs</option>
+              </select>
             </div>
-          ) : !loading && products.length === 0 ? (
-            <p className="empty">Aucun produit trouve.</p>
-          ) : (
-            <div className="product-grid">
-              {products.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+            <div className="filter-group">
+              <label htmlFor="filter-sort">Trier par</label>
+              <select
+                id="filter-sort"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
+                <option value="createdAt">Date</option>
+                <option value="price">Prix</option>
+                <option value="name">Nom</option>
+              </select>
             </div>
-          )}
+            <div className="filter-group">
+              <label htmlFor="filter-order">Ordre</label>
+              <select
+                id="filter-order"
+                value={order}
+                onChange={(e) => setOrder(e.target.value)}
+              >
+                <option value="asc">Croissant</option>
+                <option value="desc">Decroissant</option>
+              </select>
+            </div>
+          </div>
+        </header>
 
-          <LoadMore
-            loaded={products.length}
-            total={pagination?.total ?? 0}
-            hasMore={hasMore}
-            loadingMore={loadingMore}
-            onLoadMore={loadMore}
-          />
-        </>
-      )}
+        {showInitialError ? (
+          <ErrorState message={error} onRetry={retry} retrying={loading} />
+        ) : (
+          <div className="catalog-body">
+            <div className="catalog-scroll">
+              {loading && products.length === 0 ? (
+                <div className="product-grid">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <SkeletonCard key={i} />
+                  ))}
+                </div>
+              ) : !loading && products.length === 0 ? (
+                <EmptyState hasCategoryFilter={Boolean(category)} />
+              ) : (
+                <div className="product-grid">
+                  {products.map((product) => (
+                    <ProductCard key={product._id} product={product} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <LoadMore
+              loaded={products.length}
+              total={pagination?.total ?? 0}
+              hasMore={hasMore}
+              loadingMore={loadingMore}
+              loadMoreError={loadMoreError}
+              onLoadMore={loadMore}
+              onRetry={retry}
+            />
+          </div>
+        )}
+      </div>
+      <Footer />
     </div>
   );
 }
