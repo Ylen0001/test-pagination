@@ -113,3 +113,12 @@ security(backend): add HTTP hardening and project structure
 - Swagger UI sur `/api-docs`, spec JSON sur `/api-docs.json`
 - CSP Helmet assouplie uniquement sur les routes de documentation
 - CI : verification `/api-docs.json` et `/api-docs/`
+
+## Phase 6 — Polish UI états (branche `feat/ui-polish`)
+
+- Etat vide contextuel (filtre categorie vs catalogue vide)
+- Erreur initiale avec bouton Reessayer
+- Erreur load more sans masquer la grille deja chargee
+- Message de fin : « Tous les produits sont affiches »
+- Cartes : ligne d'accent rhodonite + badge pill categorie
+- Footer : onglets pills (A propos, Contact, Rejoindre, FAQ, Livraison, CGV)

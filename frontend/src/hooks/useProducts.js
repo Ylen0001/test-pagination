@@ -8,6 +8,8 @@ export function useProducts({ limit, category, sort, order }) {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const [loadMoreError, setLoadMoreError] = useState(null);
+  const [retryToken, setRetryToken] = useState(0);
 
   const filterKey = `${category}|${sort}|${order}`;
   const lastFilterKey = useRef(filterKey);
@@ -33,7 +35,12 @@ export function useProducts({ limit, category, sort, order }) {
       setLoadingMore(true);
     }
 
-    setError(null);
+    if (page === 1) {
+      setError(null);
+      setLoadMoreError(null);
+    } else {
+      setLoadMoreError(null);
+    }
 
     fetchProducts({ page, limit, category, sort, order })
       .then((data) => {
@@ -48,8 +55,10 @@ export function useProducts({ limit, category, sort, order }) {
         if (page === 1) {
           setProducts([]);
           setPagination(null);
+          setError(err.message);
+        } else {
+          setLoadMoreError(err.message);
         }
-        setError(err.message);
       })
       .finally(() => {
         if (!cancelled) {
@@ -63,7 +72,7 @@ export function useProducts({ limit, category, sort, order }) {
       setLoading(false);
       setLoadingMore(false);
     };
-  }, [page, filterKey, limit, category, sort, order]);
+  }, [page, filterKey, limit, category, sort, order, retryToken]);
 
   const hasMore = pagination ? products.length < pagination.total : false;
 
@@ -72,5 +81,19 @@ export function useProducts({ limit, category, sort, order }) {
     setPage((current) => current + 1);
   }, [loading, loadingMore, hasMore]);
 
-  return { products, pagination, loading, loadingMore, error, hasMore, loadMore };
+  const retry = useCallback(() => {
+    setRetryToken((current) => current + 1);
+  }, []);
+
+  return {
+    products,
+    pagination,
+    loading,
+    loadingMore,
+    error,
+    loadMoreError,
+    hasMore,
+    loadMore,
+    retry,
+  };
 }
