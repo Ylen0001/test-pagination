@@ -6,6 +6,11 @@ import LoadMore from "./components/LoadMore";
 import EmptyState from "./components/EmptyState";
 import ErrorState from "./components/ErrorState";
 import Footer from "./components/Footer";
+import CategoryRail from "./components/CategoryRail";
+import CategoryStrip from "./components/CategoryStrip";
+import SortControls from "./components/SortControls";
+import SideNav from "./components/SideNav";
+import { CATEGORY_FILTERS } from "./config/categories";
 
 export default function App() {
   const [limit] = useState(12);
@@ -26,55 +31,35 @@ export default function App() {
   } = useProducts({ limit, category, sort, order });
 
   const showInitialError = error && products.length === 0 && !loading;
+  const catalogViewKey = `${category}|${sort}|${order}`;
 
   return (
     <div className="page-shell">
-      <div className="app">
+      <SideNav />
+      <CategoryStrip
+        selectedCategory={category}
+        onSelectCategory={setCategory}
+      />
+      <div className="catalog-layout">
+        <CategoryRail
+          categories={CATEGORY_FILTERS.left}
+          selectedCategory={category}
+          onSelectCategory={setCategory}
+        />
+
+        <div className="app">
         <header className="header">
           <div className="header-title">
             <h1>Catalogue</h1>
             <p className="subtitle">Decouvrez notre selection</p>
           </div>
 
-          <div className="filters-panel">
-            <div className="filter-group">
-              <label htmlFor="filter-category">Categorie</label>
-              <select
-                id="filter-category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="">Toutes</option>
-                <option value="shoes">Chaussures</option>
-                <option value="clothing">Vetements</option>
-                <option value="accessories">Accessoires</option>
-                <option value="bags">Sacs</option>
-              </select>
-            </div>
-            <div className="filter-group">
-              <label htmlFor="filter-sort">Trier par</label>
-              <select
-                id="filter-sort"
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-              >
-                <option value="createdAt">Date</option>
-                <option value="price">Prix</option>
-                <option value="name">Nom</option>
-              </select>
-            </div>
-            <div className="filter-group">
-              <label htmlFor="filter-order">Ordre</label>
-              <select
-                id="filter-order"
-                value={order}
-                onChange={(e) => setOrder(e.target.value)}
-              >
-                <option value="asc">Croissant</option>
-                <option value="desc">Decroissant</option>
-              </select>
-            </div>
-          </div>
+          <SortControls
+            sort={sort}
+            order={order}
+            onSortChange={setSort}
+            onOrderChange={setOrder}
+          />
         </header>
 
         {showInitialError ? (
@@ -82,21 +67,23 @@ export default function App() {
         ) : (
           <div className="catalog-body">
             <div className="catalog-scroll">
-              {loading && products.length === 0 ? (
-                <div className="product-grid">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <SkeletonCard key={i} />
-                  ))}
-                </div>
-              ) : !loading && products.length === 0 ? (
-                <EmptyState hasCategoryFilter={Boolean(category)} />
-              ) : (
-                <div className="product-grid">
-                  {products.map((product) => (
-                    <ProductCard key={product._id} product={product} />
-                  ))}
-                </div>
-              )}
+              <div key={catalogViewKey} className="catalog-view">
+                {loading && products.length === 0 ? (
+                  <div className="product-grid">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <SkeletonCard key={i} />
+                    ))}
+                  </div>
+                ) : !loading && products.length === 0 ? (
+                  <EmptyState hasCategoryFilter={Boolean(category)} />
+                ) : (
+                  <div className="product-grid">
+                    {products.map((product) => (
+                      <ProductCard key={product._id} product={product} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <LoadMore
@@ -110,6 +97,13 @@ export default function App() {
             />
           </div>
         )}
+        </div>
+
+        <CategoryRail
+          categories={CATEGORY_FILTERS.right}
+          selectedCategory={category}
+          onSelectCategory={setCategory}
+        />
       </div>
       <Footer />
     </div>
